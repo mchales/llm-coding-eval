@@ -12,7 +12,7 @@ Before you begin, make sure you have Docker installed on your machine. If you do
 
 ## Building the Docker Image
 
-To build the Docker image for this project, navigate to the root directory of the project where the Dockerfile is located and run the following command:
+To build the Docker image for this project, navigate to the human-eval directory of the project where the Dockerfile is located and run the following command:
 
 ```bash
 docker build -t human-eval-app .
