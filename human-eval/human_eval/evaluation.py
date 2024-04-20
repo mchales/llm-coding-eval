@@ -38,7 +38,7 @@ def estimate_pass_at_k(
 
 def evaluate_functional_correctness(
     sample_file: str,
-    k: List[int] = [1, 10, 100],
+    k: List[int] = [1, 5, 10, 100],
     n_workers: int = 4,
     timeout: float = 3.0,
     problem_file: str = HUMAN_EVAL,
