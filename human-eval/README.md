@@ -29,13 +29,31 @@ docker run --name human-eval-container -it human-eval-app
 For evaluating a subset of the problems
 
 ```
-$ evaluate_functional_correctness data/human_eval_subset/subset_samples.jsonl --problem_file=data/human_eval_subset/subset_problems.jsonl
+evaluate_functional_correctness data/human_eval_subset/subset_samples.jsonl --problem_file=data/human_eval_subset/subset_problems.jsonl
+```
+
+For evaluating attempted mistakes
+
+```
+evaluate_functional_correctness data/use_mistake/use_mistake_samples.jsonl --problem_file=data/human_eval_subset/subset_problems.jsonl
+```
+
+For evaluating attempts that use mistakes
+
+```
+evaluate_functional_correctness data/use_mistake/use_mistake_samples.jsonl --problem_file=data/human_eval_subset/subset_problems.jsonl
+```
+
+For evaluating attemtpts that use attempts
+
+```
+evaluate_functional_correctness data/use_attempt/use_attempts_samples.jsonl --problem_file=data/human_eval_subset/subset_problems.jsonl
 ```
 
 For evaluating all the problems
 
 ```
-$ evaluate_functional_correctness samples.jsonl
+evaluate_functional_correctness samples.jsonl
 ```
 
 Within the shell of the running container you can test the sample
