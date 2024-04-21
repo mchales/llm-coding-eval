@@ -17,20 +17,24 @@ llm = ChatOpenAI(temperature = 0.8, # 0.8 temperature was used in the human eval
                    model_name="gpt-3.5-turbo")
 
 
-# All the directories and file paths, if using windows change the / to \
 ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
+
+PYTHON_SAGA = os.path.join(ROOT, "python_saga")
+PYTHON_SAGA_EVAL = os.path.join(PYTHON_SAGA, "basic185.jsonl")
+
 SUBSET_EVAL = os.path.join(ROOT, "human_eval_subset", "subset_problems.jsonl")
 
-MISTAKE = os.path.join(ROOT, "mistake", "mistake_samples.jsonl")
-USE_MISTAKE = os.path.join(ROOT, "use_mistake", "use_mistake_samples.jsonl")
+# Use ROOT for human eval, use PYTHON_SAGA for the python saga problems
+MISTAKE = os.path.join(PYTHON_SAGA, "mistake", "mistake_samples.jsonl")
+USE_MISTAKE = os.path.join(PYTHON_SAGA, "use_mistake", "use_mistake_samples.jsonl")
 
-ATTEMPT = os.path.join(ROOT, "attempt", "attempt_samples.jsonl")
-USE_ATTEMPT = os.path.join(ROOT, "use_attempt", "use_attempt_samples.jsonl")
+ATTEMPT = os.path.join(PYTHON_SAGA, "attempt", "attempt_samples.jsonl")
+USE_ATTEMPT = os.path.join(PYTHON_SAGA, "use_attempt", "use_attempt_samples.jsonl")
 
 # Currently we are only doing the problems in the subset
 # problems = read_problems(SUBSET_EVAL)
-
-problems = read_problems()
+problems = read_problems(PYTHON_SAGA_EVAL)
+# problems = read_problems()
 
 
 # These are all the prompts being used
@@ -43,7 +47,7 @@ use_attempt_prompt = '''This is an attempt to the function: \n {problem} \n {att
                         '''
 
 # How many tries the model does on each task
-num_samples_per_task = 5
+num_samples_per_task = 10
 
 def generate_mistake_completion(problem):
         
@@ -144,15 +148,15 @@ def generate_attempt_attempt_solution():
 
 if __name__ == "__main__":
     # Generate mistakes
-    # generate_mistake_solution()
+    generate_mistake_solution()
 
-    # # Generate attempts
-    # generate_attempt_solution()
+    # Generate attempts
+    generate_attempt_solution()
 
-    # # Generate attempts using mistakes
-    # generate_attempt_mistake_solution()
+    # Generate attempts using mistakes
+    generate_attempt_mistake_solution()
 
-    # # Generate attempts using attempts
+    # Generate attempts using attempts
     generate_attempt_attempt_solution()
 
 
