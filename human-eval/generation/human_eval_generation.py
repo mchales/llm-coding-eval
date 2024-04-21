@@ -1,9 +1,13 @@
-from human_eval.data import write_jsonl, read_problems, read_attempts
+from human_eval.data import write_jsonl, read_problems, stream_jsonl
 import os
 from langchain_core.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
+
+
+def read_attempts(evalset_file):
+    return [task for task in stream_jsonl(evalset_file)]
 
 load_dotenv()
 OPENAU_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -14,19 +18,19 @@ llm = ChatOpenAI(temperature = 0.8, # 0.8 temperature was used in the human eval
 
 
 # All the directories and file paths, if using windows change the / to \
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SUBSET_EVAL = os.path.join(ROOT, "data/human_eval_subset", "subset_problems.jsonl")
+ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
+SUBSET_EVAL = os.path.join(ROOT, "human_eval_subset", "subset_problems.jsonl")
 
-MISTAKE = os.path.join(ROOT, "data/mistake", "mistake_samples.jsonl")
-USE_MISTAKE = os.path.join(ROOT, "data/use_mistake", "use_mistake_samples.jsonl")
+MISTAKE = os.path.join(ROOT, "mistake", "mistake_samples.jsonl")
+USE_MISTAKE = os.path.join(ROOT, "use_mistake", "use_mistake_samples.jsonl")
 
-ATTEMPT = os.path.join(ROOT, "data/attempt", "attempt_samples.jsonl")
-USE_ATTEMPT = os.path.join(ROOT, "data/use_attempt", "use_attempt_samples.jsonl")
+ATTEMPT = os.path.join(ROOT, "attempt", "attempt_samples.jsonl")
+USE_ATTEMPT = os.path.join(ROOT, "use_attempt", "use_attempt_samples.jsonl")
 
 # Currently we are only doing the problems in the subset
-problems = read_problems(SUBSET_EVAL)
+# problems = read_problems(SUBSET_EVAL)
 
-# problems = read_problems()
+problems = read_problems()
 
 
 # These are all the prompts being used
@@ -35,7 +39,7 @@ mistake_prompt = '''Complete this task with mistakes. Only return your addition 
 use_mistake_prompt = '''This function has mistakes \n {problem} \n {mistake} \n Redo this task and fix the mistakes of the solution above. \n {problem}
                         '''
 use_attempt_prompt = '''This is an attempt to the function: \n {problem} \n {attempt} \n
-                         If the solution is correct please output it. If the solution is incorrect redo the task.
+                         If the solution is correct please output the existing function code. If the solution is incorrect fix and output the function code. \n {problem} 
                         '''
 
 # How many tries the model does on each task
@@ -132,7 +136,7 @@ def generate_attempt_attempt_solution():
     attempts = read_attempts(ATTEMPT)
 
     use_attempt_attempts = [
-        dict(task_id=attempt["task_id"], completion=generate_attempt_with_mistake(problems[attempt["task_id"]]["prompt"], attempt["completion"]))
+        dict(task_id=attempt["task_id"], completion=generate_attempt_with_attempt(problems[attempt["task_id"]]["prompt"], attempt["completion"]))
         for attempt in attempts
     ]
 
@@ -140,15 +144,15 @@ def generate_attempt_attempt_solution():
 
 if __name__ == "__main__":
     # Generate mistakes
-    generate_mistake_solution()
+    # generate_mistake_solution()
 
-    # Generate attempts
-    generate_attempt_solution()
+    # # Generate attempts
+    # generate_attempt_solution()
 
-    # Generate attempts using mistakes
-    generate_attempt_mistake_solution()
+    # # Generate attempts using mistakes
+    # generate_attempt_mistake_solution()
 
-    # Generate attempts using attempts
+    # # Generate attempts using attempts
     generate_attempt_attempt_solution()
 
 
