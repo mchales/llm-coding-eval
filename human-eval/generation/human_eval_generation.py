@@ -21,23 +21,89 @@ ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
 
 PYTHON_SAGA = os.path.join(ROOT, "python_saga")
 PYTHON_SAGA_EVAL = os.path.join(PYTHON_SAGA, "basic185.jsonl")
+PYTHON_SAGA_EVAL_SUBSET = os.path.join(PYTHON_SAGA, "basic10.jsonl")
 
 SUBSET_EVAL = os.path.join(ROOT, "human_eval_subset", "subset_problems.jsonl")
 
 # Use ROOT for human eval, use PYTHON_SAGA for the python saga problems
-MISTAKE = os.path.join(PYTHON_SAGA, "mistake", "mistake_samples.jsonl")
-USE_MISTAKE = os.path.join(PYTHON_SAGA, "use_mistake", "use_mistake_samples.jsonl")
+MISTAKE = os.path.join(ROOT, "mistake", "mistake_samples.jsonl")
+USE_MISTAKE = os.path.join(ROOT, "use_mistake", "use_mistake_samples.jsonl")
 
-ATTEMPT = os.path.join(PYTHON_SAGA, "attempt", "attempt_samples.jsonl")
-USE_ATTEMPT = os.path.join(PYTHON_SAGA, "use_attempt", "use_attempt_samples.jsonl")
+ATTEMPT = os.path.join(ROOT, "attempt", "attempt_samples.jsonl")
+USE_ATTEMPT = os.path.join(ROOT, "use_attempt", "use_attempt_samples.jsonl")
 
 # Currently we are only doing the problems in the subset
+problems = read_problems()
 # problems = read_problems(SUBSET_EVAL)
-problems = read_problems(PYTHON_SAGA_EVAL)
-# problems = read_problems()
+# problems = read_problems(PYTHON_SAGA_EVAL)
+# problems = read_problems(PYTHON_SAGA_EVAL_SUBSET)
 
 
-# These are all the prompts being used
+# attempt_prompt = '''Complete the code of this function.
+
+# Example Input:
+# add_weird(x: int, y: int):\n    \"\"\"Add x squared plus y squared\n    >>> add(2, 3)\n    13\n    >>> add(5, 7)\n    74\n    \"\"\"\n
+
+# Example Output:
+#     return x**2 + y**2
+
+# Input:
+# \n{problem}\n
+
+# Output: \n
+#                     '''
+
+# # These are all the prompts being used
+# mistake_prompt = '''Complete this task with mistakes. Only return your addition to the existing code. Do not repeat the function header. 
+# Example Input:
+# add_weird(x: int, y: int):\n    \"\"\"Add x squared plus y squared\n    >>> add(2, 3)\n    13\n    >>> add(5, 7)\n    74\n    \"\"\"\n
+
+# Example Output:
+#     return x**2 + y**3
+
+# Input:
+# \n{problem}\n
+
+# Output: \n
+#                     '''
+
+# use_mistake_prompt = '''You are given a function with a mistake. Fix the mistake and output the correct function code.
+
+# Example Input:
+# add_weird(x: int, y: int):\n    \"\"\"Add x squared plus y squared\n    >>> add(2, 3)\n    13\n    >>> add(5, 7)\n    74\n    \"\"\"\n
+#     return x**2 + y**3
+
+# Example Output:
+#     return x**2 + y**2
+
+# Input:
+# \n {problem} \n {mistake} \n
+# Output: \n
+#                         '''
+# use_attempt_prompt = '''You are given an attempt at a function. If the attempt is wrong fix the mistake and output the correct function code.
+
+# Example Input:
+# add_weird(x: int, y: int):\n    \"\"\"Add x squared plus y squared\n    >>> add(2, 3)\n    13\n    >>> add(5, 7)\n    74\n    \"\"\"\n
+
+#     return x**2 + y**3
+
+# Example Output:
+#     return x**2 + y**2
+    
+# Example Input:
+# add_weird(x: int, y: int):\n    \"\"\"Add x squared plus y squared\n    >>> add(2, 3)\n    13\n    >>> add(5, 7)\n    74\n    \"\"\"\n
+
+#     return x**2 + y**2
+
+# Example Output:
+#     return x**2 + y**2
+
+# Input:
+# \n {problem} \n {attempt} \n
+# Output: \n
+#                         '''
+
+
 mistake_prompt = '''Complete this task with mistakes. Only return your addition to the existing code. Do not repeat the function header. \n {problem}'''
 
 use_mistake_prompt = '''This function has mistakes \n {problem} \n {mistake} \n Redo this task and fix the mistakes of the solution above. \n {problem}
@@ -59,6 +125,7 @@ def generate_mistake_completion(problem):
         chain = LLMChain(llm=llm, prompt=prompt_setup, verbose=True)
         completion = chain.predict(problem=problem)
         
+        
         return completion
 
 
@@ -75,11 +142,11 @@ def generate_mistake_solution():
 
 def generate_attempt_completion(problem):
     
-    prompt_template = '''{problem}'''
+    prompt='''{problem}'''
     
     prompt_setup = PromptTemplate(
         input_variables=["problem"],
-        template=prompt_template
+        template=prompt
     )
     
     chain = LLMChain(llm=llm, prompt=prompt_setup, verbose=True)
