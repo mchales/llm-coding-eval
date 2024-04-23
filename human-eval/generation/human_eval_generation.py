@@ -26,11 +26,11 @@ PYTHON_SAGA_EVAL_SUBSET = os.path.join(PYTHON_SAGA, "basic10.jsonl")
 SUBSET_EVAL = os.path.join(ROOT, "human_eval_subset", "subset_problems.jsonl")
 
 # Use ROOT for human eval, use PYTHON_SAGA for the python saga problems
-MISTAKE = os.path.join(ROOT, "mistake", "mistake_samples.jsonl")
-USE_MISTAKE = os.path.join(ROOT, "use_mistake", "use_mistake_samples.jsonl")
+MISTAKE = os.path.join(ROOT, "mistake", "mistake_samples_all.jsonl")
+USE_MISTAKE = os.path.join(ROOT, "use_mistake", "use_mistake_samples_all.jsonl")
 
-ATTEMPT = os.path.join(ROOT, "attempt", "attempt_samples.jsonl")
-USE_ATTEMPT = os.path.join(ROOT, "use_attempt", "use_attempt_samples.jsonl")
+ATTEMPT = os.path.join(ROOT, "attempt", "attempt_samples_all.jsonl")
+USE_ATTEMPT = os.path.join(ROOT, "use_attempt", "use_attempt_samples_all.jsonl")
 
 # Currently we are only doing the problems in the subset
 problems = read_problems()
